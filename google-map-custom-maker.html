@@ -1,0 +1,326 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../google-apis/google-maps-api.html">
+
+<link rel="import" href="./custom-marker.html">
+
+<!--
+
+@demo demo/index.html
+
+The `google-map-custom-marker` element represents a custom map marker. It is used as a
+child of `google-map`.
+
+<b>Example</b>:
+
+    <google-map latitude="37.77493" longitude="-122.41942">
+      <google-map-custom-marker latitude="37.779" longitude="-122.3892"
+          position="bottom">
+            <div class="my-marker">
+              Custom marker
+            </div>
+          </google-map-custom-marker>
+    </google-map>
+
+
+-->
+
+<dom-module id="google-map-custom-marker">
+  <style>
+    :host {
+      display: none;
+    }
+  </style>
+  <template>
+    <custom-marker id="marker" position="{{position}}">
+      <content></content>
+    </custom-marker>
+  </template>
+</dom-module>
+
+<script>
+	(function () {
+
+		Polymer({
+
+			is: 'google-map-custom-marker',
+
+			/**
+			 * @event click
+			 */
+
+			properties: {
+				/**
+				 * A Google Maps overlay object.
+				 * @type google.maps.Overlay
+				 */
+				overlay: {
+					type: Object,
+					notify: true
+				},
+
+				/**
+				 * The Google map object.
+				 * @type google.maps.Map
+				 */
+				map: {
+					type: Object,
+					observer: '_mapChanged'
+				},
+
+				/**
+				 * When true, marker *click events are automatically registered.
+				 */
+				clickEvents: {
+					type: Boolean,
+					value: false,
+					observer: '_clickEventsChanged'
+				},
+
+				/**
+				 * When true, marker mouse* events are automatically registered.
+				 */
+				mouseEvents: {
+					type: Boolean,
+					value: false,
+					observer: '_mouseEventsChanged'
+				},
+
+				/**
+				 * The marker's longitude coordinate.
+				 */
+				longitude: {
+					type: Number,
+					value: null,
+					notify: true
+				},
+
+				/**
+				 * The marker's latitude coordinate.
+				 */
+				latitude: {
+					type: Number,
+					value: null,
+					notify: true
+				},
+
+				/**
+				 * Position of the overlay
+				 * @param {('center'|'bottom'|'top'|'left'|'right')}
+				 */
+				position: {
+					type: String,
+					value: 'center'
+				}
+
+			},
+
+			observers: [
+				'_updatePosition(latitude, longitude)'
+			],
+
+			detached: function () {
+				if (this.overlay) {
+					google.maps.event.clearInstanceListeners(this.overlay);
+					this._listeners = {};
+					this.overlay.setMap(null);
+				}
+				if (this._contentObserver)
+					this._contentObserver.disconnect();
+			},
+
+			attached: function () {
+				// If element is added back to DOM, put it back on the map.
+				if (this.overlay) {
+					this.overlay.setMap(this.map);
+				}
+			},
+
+			_updatePosition: function () {
+				if (this.overlay && this.latitude != null && this.longitude != null) {
+					this.overlay.setPosition(new google.maps.LatLng(
+						parseFloat(this.latitude), parseFloat(this.longitude)));
+				}
+			},
+
+			_clickEventsChanged: function () {
+				if (this.map) {
+					if (this.clickEvents) {
+						this._forwardEvent('click');
+						this._forwardEvent('dblclick');
+						this._forwardEvent('rightclick');
+					} else {
+						this._clearListener('click');
+						this._clearListener('dblclick');
+						this._clearListener('rightclick');
+					}
+				}
+			},
+
+			_dragEventsChanged: function () {
+				if (this.map) {
+					if (this.dragEvents) {
+						this._forwardEvent('drag');
+						this._forwardEvent('dragend');
+						this._forwardEvent('dragstart');
+					} else {
+						this._clearListener('drag');
+						this._clearListener('dragend');
+						this._clearListener('dragstart');
+					}
+				}
+			},
+
+			_mouseEventsChanged: function () {
+				if (this.map) {
+					if (this.mouseEvents) {
+						this._forwardEvent('mousedown');
+						this._forwardEvent('mousemove');
+						this._forwardEvent('mouseout');
+						this._forwardEvent('mouseover');
+						this._forwardEvent('mouseup');
+					} else {
+						this._clearListener('mousedown');
+						this._clearListener('mousemove');
+						this._clearListener('mouseout');
+						this._clearListener('mouseover');
+						this._clearListener('mouseup');
+					}
+				}
+			},
+
+			_zIndexChanged: function () {
+				if (this.overlay) {
+					this.overlay.setZIndex(this.zIndex);
+				}
+			},
+
+			_mapChanged: function () {
+				// Marker will be rebuilt, so disconnect existing one from old map and listeners.
+				if (this.overlay) {
+					this.overlay.setMap(null);
+					google.maps.event.clearInstanceListeners(this.overlay);
+				}
+
+				if (this.map && this.map instanceof google.maps.Map) {
+					this._mapReady();
+				}
+			},
+
+			_mapReady: function () {
+				this._listeners = {};
+				this._setupOverlay();
+				this._clickEventsChanged();
+				this._dragEventsChanged();
+				this._mouseEventsChanged();
+			},
+
+			_setupOverlay: function () {
+				var elem = this;
+
+				function CustomMarker(lat, lng, map, marker, args) {
+					this.latlng = new google.maps.LatLng(parseFloat(lat), parseFloat(lng));
+					this.args = args;
+					this.setMap(map);
+					this.marker = marker.cloneNode(true);
+				}
+
+				CustomMarker.prototype = new google.maps.OverlayView();
+
+				CustomMarker.prototype.draw = function () {
+
+					var self = this;
+
+					var div = this.div;
+
+					if (!div) {
+						div = this.div = this.marker;
+
+						if (typeof(self.args.marker_id) !== 'undefined') {
+							div.dataset.marker_id = self.args.marker_id;
+						}
+
+						google.maps.event.addDomListener(div, "click", function (event) {
+							elem.fire('click', event);
+							google.maps.event.trigger(self, "click");
+						});
+
+						var panes = this.getPanes();
+						panes.overlayImage.appendChild(div);
+					}
+
+
+					var point = this.getProjection().fromLatLngToDivPixel(this.latlng);
+
+					if (point) {
+						div.style.left = point.x + 'px';
+						div.style.top = point.y + 'px';
+					}
+				};
+
+				CustomMarker.prototype.remove = function () {
+					if (this.div) {
+						this.div.parentNode.removeChild(this.div);
+						this.div = null;
+					}
+				};
+
+				CustomMarker.prototype.getPosition = function () {
+					return this.latlng;
+				};
+
+				this.overlay = new CustomMarker(
+					this.latitude,
+					this.longitude,
+					this.map,
+					this.$.marker,
+					{}
+				);
+			},
+
+
+			_contentChanged: function () {
+				if (this._contentObserver)
+					this._contentObserver.disconnect();
+				// Watch for future updates.
+				this._contentObserver = new MutationObserver(this._contentChanged.bind(this));
+				this._contentObserver.observe(this, {
+					childList: true,
+					subtree: true
+				});
+
+				var content = this.innerHTML.trim();
+				if (content) {
+					this.overlay.div.innerHTML = content;
+				}
+			},
+
+			_clearListener: function (name) {
+				if (this._listeners[name]) {
+					google.maps.event.removeListener(this._listeners[name]);
+					this._listeners[name] = null;
+				}
+			},
+
+			_forwardEvent: function (name) {
+				this._listeners[name] = google.maps.event.addListener(this.overlay, name, function (event) {
+					this.fire('google-map-overlay-' + name, event);
+				}.bind(this));
+			},
+
+			attributeChanged: function (attrName) {
+				if (!this.overlay) {
+					return;
+				}
+
+				// Cannot use *Changed watchers for native properties.
+				switch (attrName) {
+					case 'hidden':
+						this.overlay.setVisible(!this.hidden);
+						break;
+				}
+			}
+		});
+
+	})();
+</script>
+

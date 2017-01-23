@@ -1,0 +1,56 @@
+<dom-module id="custom-marker">
+    <style>
+        :host {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            cursor: default;
+            transition: box-shadow .3s ease;
+        }
+
+        :host(:hover), :host(:active) {
+            z-index: 999999999;
+        }
+
+        :host([position="top"]) {
+            transform: translate(-50%, -100%);
+        }polymer init
+
+        :host([position="center"]) {
+            transform: translate(-50%, -50%);
+        }
+
+        :host([position="bottom"]) {
+            transform: translate(-50%, 0);
+        }
+
+        :host([position="left"]) {
+            transform: translate(-100%, -50%);
+        }
+
+        :host([position="right"]) {
+            transform: translate(0, -50%);
+        }
+
+    </style>
+    <template>
+        <content></content>
+    </template>
+</dom-module>
+<script>
+	(function () {
+
+		Polymer({
+
+			is: 'custom-marker',
+
+			properties: {
+				position: {
+					type: String,
+                    reflectToAttribute: true
+				}
+			}
+
+		});
+
+	})();
+</script>
