@@ -8,6 +8,14 @@
 
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
 
+    <script>
+        /* this script must run before Polymer is imported */
+				window.Polymer = {
+					dom: 'shadow',
+					lazyRegister: true
+				};
+    </script>
+
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../../google-map/google-map-elements.html">
@@ -38,38 +46,23 @@
 <div class="vertical-section-container">
     <h3>Basic google-map-custom-maker demo</h3>
     <demo-snippet>
-        <template>
+        <template is="dom-bind" id="tpl">
             <google-map latitude="37.77493" longitude="-122.41942" fit-to-markers
                         api-key="AIzaSyDtwbkcg7mLu-h4J_UydSkF2KtrBtdGuTk">
-                <google-map-marker latitude="37.779" longitude="-122.3892"
-                                   draggable="true" title="Go Giants!"></google-map-marker>
-                <google-map-marker latitude="37.777" longitude="-122.38913"></google-map-marker>
-                <google-map-custom-marker latitude="37.777" longitude="-122.38913">
-                    <div class="mymarker">Custom Marker</div>
-                </google-map-custom-marker>
-
-                <google-map-marker latitude="37.777" longitude="-122.38623"></google-map-marker>
-                <google-map-custom-marker latitude="37.777" longitude="-122.38623" position="top">
-                    <div class="mymarker">Custom Marker</div>
-                </google-map-custom-marker>
-
-                <google-map-marker latitude="37.777" longitude="-122.38223"></google-map-marker>
-                <google-map-custom-marker latitude="37.777" longitude="-122.38223" position="right">
-                    <div class="mymarker">Custom Marker</div>
-                </google-map-custom-marker>
-
-                <google-map-marker latitude="37.777" longitude="-122.38023"></google-map-marker>
-                <google-map-custom-marker latitude="37.777" longitude="-122.38023" position="bottom">
-                    <div class="mymarker">Custom Marker</div>
-                </google-map-custom-marker>
-
-                <google-map-marker latitude="37.777" longitude="-122.38423"></google-map-marker>
-                <google-map-custom-marker latitude="37.777" longitude="-122.38423" position="left">
-                    <div class="mymarker">Custom Marker</div>
-                </google-map-custom-marker>
+                <template is="dom-repeat" items="{{markers}}">
+                    <google-map-custom-marker latitude="{{item.lat}}" longitude="{{item.lng}}" position="left">
+                        <div class="mymarker">Custom Marker {{index}}</div>
+                    </google-map-custom-marker>
+                </template>
             </google-map>
         </template>
     </demo-snippet>
 </div>
+<script>
+
+    var t = document.querySelector('#tpl');
+    var markers = [ { lat: "37.777", lng: "-122.38423" }, { lat: "37.777", lng: "-122.38123" } ];
+    t.markers = markers;
+</script>
 </body>
 </html>

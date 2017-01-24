@@ -25,16 +25,16 @@ child of `google-map`.
 -->
 
 <dom-module id="google-map-custom-marker">
-  <style>
-    :host {
-      display: none;
-    }
-  </style>
-  <template>
-    <custom-marker id="marker" position="{{position}}">
-      <content></content>
-    </custom-marker>
-  </template>
+    <style>
+        :host {
+            display: none;
+        }
+    </style>
+    <template>
+        <custom-marker id="marker" position="{{position}}">
+            <content></content>
+        </custom-marker>
+    </template>
 </dom-module>
 
 <script>
@@ -118,11 +118,15 @@ child of `google-map`.
 				'_updatePosition(latitude, longitude)'
 			],
 
+			_clearOverlay: function () {
+				google.maps.event.clearInstanceListeners(this.overlay);
+				this._listeners = {};
+				this.overlay.setMap(null);
+			},
+
 			detached: function () {
 				if (this.overlay) {
-					google.maps.event.clearInstanceListeners(this.overlay);
-					this._listeners = {};
-					this.overlay.setMap(null);
+					this._clearOverlay();
 				}
 				if (this._contentObserver)
 					this._contentObserver.disconnect();
@@ -136,9 +140,8 @@ child of `google-map`.
 			},
 
 			_updatePosition: function () {
-				if (this.overlay && this.latitude != null && this.longitude != null) {
-					this.overlay.setPosition(new google.maps.LatLng(
-						parseFloat(this.latitude), parseFloat(this.longitude)));
+				if (this.overlay) {
+					this._setupOverlay();
 				}
 			},
 
@@ -188,12 +191,6 @@ child of `google-map`.
 				}
 			},
 
-			_zIndexChanged: function () {
-				if (this.overlay) {
-					this.overlay.setZIndex(this.zIndex);
-				}
-			},
-
 			_mapChanged: function () {
 				// Marker will be rebuilt, so disconnect existing one from old map and listeners.
 				if (this.overlay) {
@@ -215,6 +212,10 @@ child of `google-map`.
 			},
 
 			_setupOverlay: function () {
+				if (this.overlay) {
+					this._clearOverlay();
+				}
+
 				var elem = this;
 
 				function CustomMarker(lat, lng, map, marker, args) {
@@ -222,6 +223,7 @@ child of `google-map`.
 					this.args = args;
 					this.setMap(map);
 					this.marker = marker.cloneNode(true);
+					console.log(marker, this.marker);
 				}
 
 				CustomMarker.prototype = new google.maps.OverlayView();
