@@ -222,8 +222,9 @@ child of `google-map`.
 					this.latlng = new google.maps.LatLng(parseFloat(lat), parseFloat(lng));
 					this.args = args;
 					this.setMap(map);
+
+					// FIXME: doesn't work with shadowDom
 					this.marker = marker.cloneNode(true);
-					console.log(marker, this.marker);
 				}
 
 				CustomMarker.prototype = new google.maps.OverlayView();

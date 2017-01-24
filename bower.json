@@ -2,7 +2,6 @@
   "name": "google-map-custom-maker",
   "main": "google-map-custom-maker.html",
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.4.0",
     "google-map": "GoogleWebComponents/google-map#^1.2.0"
   },
   "devDependencies": {

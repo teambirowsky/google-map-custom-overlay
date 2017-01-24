@@ -11,7 +11,7 @@
     <script>
         /* this script must run before Polymer is imported */
 				window.Polymer = {
-					dom: 'shadow',
+					dom: 'shady',
 					lazyRegister: true
 				};
     </script>
@@ -60,9 +60,9 @@
 </div>
 <script>
 
-    var t = document.querySelector('#tpl');
-    var markers = [ { lat: "37.777", lng: "-122.38423" }, { lat: "37.777", lng: "-122.38123" } ];
-    t.markers = markers;
+	var t = document.querySelector('#tpl');
+	var markers = [{ lat: "37.777", lng: "-122.38423" }, { lat: "37.777", lng: "-122.38123" }];
+	t.markers = markers;
 </script>
 </body>
 </html>
