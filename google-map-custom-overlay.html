@@ -72,17 +72,7 @@ child of `google-map`.
 				 */
 				clickEvents: {
 					type: Boolean,
-					value: false,
-					observer: '_clickEventsChanged'
-				},
-
-				/**
-				 * When true, marker mouse* events are automatically registered.
-				 */
-				mouseEvents: {
-					type: Boolean,
-					value: false,
-					observer: '_mouseEventsChanged'
+					value: false
 				},
 
 				/**
@@ -115,12 +105,14 @@ child of `google-map`.
 			},
 
 			observers: [
-				'_updatePosition(latitude, longitude)'
+				'_updatePosition(latitude, longitude)',
+				'_clickEventsChanged(clickEvents, overlay.div)'
 			],
 
 			_clearOverlay: function () {
 				google.maps.event.clearInstanceListeners(this.overlay);
 				this._listeners = {};
+				this._domListeners = {};
 				this.overlay.setMap(null);
 			},
 
@@ -146,7 +138,7 @@ child of `google-map`.
 			},
 
 			_clickEventsChanged: function () {
-				if (this.map) {
+				if (this.map && this.overlay.div) {
 					if (this.clickEvents) {
 						this._forwardEvent('click');
 						this._forwardEvent('dblclick');
@@ -155,38 +147,6 @@ child of `google-map`.
 						this._clearListener('click');
 						this._clearListener('dblclick');
 						this._clearListener('rightclick');
-					}
-				}
-			},
-
-			_dragEventsChanged: function () {
-				if (this.map) {
-					if (this.dragEvents) {
-						this._forwardEvent('drag');
-						this._forwardEvent('dragend');
-						this._forwardEvent('dragstart');
-					} else {
-						this._clearListener('drag');
-						this._clearListener('dragend');
-						this._clearListener('dragstart');
-					}
-				}
-			},
-
-			_mouseEventsChanged: function () {
-				if (this.map) {
-					if (this.mouseEvents) {
-						this._forwardEvent('mousedown');
-						this._forwardEvent('mousemove');
-						this._forwardEvent('mouseout');
-						this._forwardEvent('mouseover');
-						this._forwardEvent('mouseup');
-					} else {
-						this._clearListener('mousedown');
-						this._clearListener('mousemove');
-						this._clearListener('mouseout');
-						this._clearListener('mouseover');
-						this._clearListener('mouseup');
 					}
 				}
 			},
@@ -205,10 +165,9 @@ child of `google-map`.
 
 			_mapReady: function () {
 				this._listeners = {};
+				this._domListeners = {};
 				this._setupOverlay();
 				this._clickEventsChanged();
-				this._dragEventsChanged();
-				this._mouseEventsChanged();
 			},
 
 			_setupOverlay: function () {
@@ -230,9 +189,7 @@ child of `google-map`.
 				CustomMarker.prototype = new google.maps.OverlayView();
 
 				CustomMarker.prototype.draw = function () {
-
 					var self = this;
-
 					var div = this.div;
 
 					if (!div) {
@@ -242,15 +199,11 @@ child of `google-map`.
 							div.dataset.marker_id = self.args.marker_id;
 						}
 
-						google.maps.event.addDomListener(div, "click", function (event) {
-							elem.fire('click', event);
-							google.maps.event.trigger(self, "click");
-						});
-
 						var panes = this.getPanes();
 						panes.overlayImage.appendChild(div);
-					}
 
+						elem.notifyPath('overlay.div');
+					}
 
 					var point = this.getProjection().fromLatLngToDivPixel(this.latlng);
 
@@ -305,7 +258,12 @@ child of `google-map`.
 			},
 
 			_forwardEvent: function (name) {
+				this._domListeners[name] = google.maps.event.addDomListener(this.overlay.div, name, function (event) {
+					event.stopPropagation();
+					google.maps.event.trigger(this.overlay, 'click', event);
+				}.bind(this));
 				this._listeners[name] = google.maps.event.addListener(this.overlay, name, function (event) {
+					event.stopPropagation();
 					this.fire('google-map-overlay-' + name, event);
 				}.bind(this));
 			},

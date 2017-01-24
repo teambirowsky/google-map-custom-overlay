@@ -40,29 +40,72 @@
             width: 1200px;
             height: 700px;
         }
+
+        .div {
+            background: red;
+        }
+
+        .marker {
+            height: 100px;
+            width: 100px;
+        }
     </style>
 </head>
 <body>
 <div class="vertical-section-container">
     <h3>Basic google-map-custom-maker demo</h3>
     <demo-snippet>
+        <div style="background: black; width: 150px;">
+        </div>
         <template is="dom-bind" id="tpl">
             <google-map latitude="37.77493" longitude="-122.41942" fit-to-markers
                         api-key="AIzaSyDtwbkcg7mLu-h4J_UydSkF2KtrBtdGuTk">
                 <template is="dom-repeat" items="{{markers}}">
-                    <google-map-custom-overlay latitude="{{item.lat}}" longitude="{{item.lng}}" position="left">
-                        <div class="mymarker">Custom Marker {{index}}</div>
+                    <google-map-custom-overlay click-events latitude="{{item.lat}}" longitude="{{item.lng}}"
+                                               position="left" on-google-map-overlay-click="_onCLick">
+                        <div class="marker">
+                            <svg class="h3h" viewBox="0 0 70 100">
+                                <defs>
+                                    <path id="marker12" fill-rule="evenodd"
+                                          d="M55.314553,14.7746668 C50.1278586,9.40007989 42.9241164,6.20437956 35,6.20437956 C27.0758836,6.20437956 19.8721414,9.40007989 14.685447,14.7746668 C9.4987526,20.1492537 6.18503119,27.2669499 6.18503119,35.2562008 C6.18503119,48.4747794 21.7451143,76.800305 30.1014553,90.8904383 C31.1099792,92.6335476 32.9829522,93.7956204 35,93.7956204 C37.0170478,93.7956204 38.8900208,92.7788067 39.8985447,90.8904383 C48.2548857,76.9455641 63.8149688,48.4747794 63.8149688,35.2562008 C63.8149688,27.2669499 60.6453222,20.0039946 55.314553,14.7746668 Z M70,35.2562008 C70,42.4737919 66.5942972,52.6435655 60.5861738,65.4439216 C56.2095414,74.768373 50.643657,84.9943895 45.264574,93.9783775 C43.1654827,97.7717745 39.2603357,100 35,100 C30.7809438,100 26.8884791,97.6699004 24.7718563,94.0388445 C19.2249726,84.6844942 13.7625927,74.6385335 9.41558364,65.3931905 C3.39819924,52.5952455 0,42.4721427 0,35.2562008 C0,25.9190207 3.7288895,17.2078912 10.2415755,10.4592775 C16.6851366,3.78229279 25.5311641,0 35,0 C44.4399672,0 53.2609177,3.75926488 59.6994217,10.3982874 C66.2784473,16.8839283 70,25.7605548 70,35.2562008 Z"></path>
+                                    <path id="coverClipPath"
+                                          d="M70,35.2562008 C70,42.4737919 66.5942972,52.6435655 60.5861738,65.4439216 C56.2095414,74.768373 50.643657,84.9943895 45.264574,93.9783775 C43.1654827,97.7717745 39.2603357,100 35,100 C30.7809438,100 26.8884791,97.6699004 24.7718563,94.0388445 C19.2249726,84.6844942 13.7625927,74.6385335 9.41558364,65.3931905 C3.39819924,52.5952455 0,42.4721427 0,35.2562008 C0,25.9190207 3.7288895,17.2078912 10.2415755,10.4592775 C16.6851366,3.78229279 25.5311641,0 35,0 C44.4399672,0 53.2609177,3.75926488 59.6994217,10.3982874 C66.2784473,16.8839283 70,25.7605548 70,35.2562008 Z"
+                                          transform="translate(35, 50) scale(.9) translate(-35, -50)"></path>
+                                    <clipPath id="coverClip">
+                                        <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                             xlink:href="#coverClipPath"></use>
+                                    </clipPath>
+                                </defs>
+                                <image clip-path="url(#coverClip)" width="70" height="100"
+                                       preserveAspectRatio="xMidYMid slice" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                       xlink:href="https://mw2.google.com/mw-panoramio/photos/medium/12191855.jpg"></image>
+                                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#marker12"
+                                     fill="white"></use>
+                            </svg>
+
+                        </div>
                     </google-map-custom-overlay>
+                    <google-map-marker click-events latitude="{{item.lat}}" longitude="{{item.lng}}"
+                                       on-google-map-marker-click="_onMarkerCLick">TEST
+                    </google-map-marker>
                 </template>
             </google-map>
+            <script>
+
+							var t = document.querySelector('#tpl');
+							var markers = [{ lat: "37.777", lng: "-122.38423" }, { lat: "37.777", lng: "-122.38123" }];
+							t.markers = markers;
+							t._onCLick = function (e, m) {
+								console.log('overlay', e, m);
+
+							}
+							t._onMarkerCLick = function (e, m) {
+								console.log('marker', e, m);
+
+							}
+            </script>
         </template>
     </demo-snippet>
 </div>
-<script>
-
-	var t = document.querySelector('#tpl');
-	var markers = [{ lat: "37.777", lng: "-122.38423" }, { lat: "37.777", lng: "-122.38123" }];
-	t.markers = markers;
-</script>
 </body>
 </html>
