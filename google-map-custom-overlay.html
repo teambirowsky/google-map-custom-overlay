@@ -200,9 +200,10 @@ child of `google-map`.
 						}
 
 						var panes = this.getPanes();
-						panes.overlayImage.appendChild(div);
+						panes.overlayMouseTarget.appendChild(div);
 
 						elem.notifyPath('overlay.div');
+
 					}
 
 					var point = this.getProjection().fromLatLngToDivPixel(this.latlng);
@@ -254,6 +255,8 @@ child of `google-map`.
 				if (this._listeners[name]) {
 					google.maps.event.removeListener(this._listeners[name]);
 					this._listeners[name] = null;
+					google.maps.event.removeDomListener(this._domListeners[name]);
+					this._domListeners[name] = null;
 				}
 			},
 
@@ -263,7 +266,6 @@ child of `google-map`.
 					google.maps.event.trigger(this.overlay, 'click', event);
 				}.bind(this));
 				this._listeners[name] = google.maps.event.addListener(this.overlay, name, function (event) {
-					event.stopPropagation();
 					this.fire('google-map-overlay-' + name, event);
 				}.bind(this));
 			},
