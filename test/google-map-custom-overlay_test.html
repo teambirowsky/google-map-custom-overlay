@@ -9,20 +9,20 @@
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
 
-    <link rel="import" href="../google-map-custom-maker.html">
+    <link rel="import" href="../google-map-custom-overlay.html">
   </head>
   <body>
     <test-fixture id="basic">
       <template>
-        <google-map-custom-maker></google-map-custom-maker>
+        <google-map-custom-overlay></google-map-custom-overlay>
       </template>
     </test-fixture>
 
     <script>
-      suite('google-map-custom-maker', function() {
+      suite('google-map-custom-overlay', function() {
         test('instantiating the element works', function() {
           var element = fixture('basic');
-          assert.equal(element.is, 'google-map-custom-maker');
+          assert.equal(element.is, 'google-map-custom-overlay');
         });
       });
     </script>

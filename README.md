@@ -1,4 +1,4 @@
-# \<google-map-custom-maker\>
+# \<google-map-custom-overlay\>
 
 
 

@@ -1,6 +1,6 @@
 {
-  "name": "google-map-custom-maker",
-  "main": "google-map-custom-maker.html",
+  "name": "google-map-custom-overlay",
+  "main": "google-map-custom-overlay.html",
   "dependencies": {
     "google-map": "GoogleWebComponents/google-map#^1.2.0"
   },

@@ -19,7 +19,7 @@
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../../google-map/google-map-elements.html">
-    <link rel="import" href="../google-map-custom-maker.html">
+    <link rel="import" href="../google-map-custom-overlay.html">
 
     <style is="custom-style" include="demo-pages-shared-styles">
 
@@ -50,9 +50,9 @@
             <google-map latitude="37.77493" longitude="-122.41942" fit-to-markers
                         api-key="AIzaSyDtwbkcg7mLu-h4J_UydSkF2KtrBtdGuTk">
                 <template is="dom-repeat" items="{{markers}}">
-                    <google-map-custom-marker latitude="{{item.lat}}" longitude="{{item.lng}}" position="left">
+                    <google-map-custom-overlay latitude="{{item.lat}}" longitude="{{item.lng}}" position="left">
                         <div class="mymarker">Custom Marker {{index}}</div>
-                    </google-map-custom-marker>
+                    </google-map-custom-overlay>
                 </template>
             </google-map>
         </template>

@@ -7,24 +7,24 @@
 
 @demo demo/index.html
 
-The `google-map-custom-marker` element represents a custom map marker. It is used as a
+The `google-map-custom-overlay` element represents a custom map marker. It is used as a
 child of `google-map`.
 
 <b>Example</b>:
 
     <google-map latitude="37.77493" longitude="-122.41942">
-      <google-map-custom-marker latitude="37.779" longitude="-122.3892"
+      <google-map-custom-overlay latitude="37.779" longitude="-122.3892"
           position="bottom">
             <div class="my-marker">
               Custom marker
             </div>
-          </google-map-custom-marker>
+          </google-map-custom-overlay>
     </google-map>
 
 
 -->
 
-<dom-module id="google-map-custom-marker">
+<dom-module id="google-map-custom-overlay">
     <style>
         :host {
             display: none;
@@ -42,7 +42,7 @@ child of `google-map`.
 
 		Polymer({
 
-			is: 'google-map-custom-marker',
+			is: 'google-map-custom-overlay',
 
 			/**
 			 * @event click
