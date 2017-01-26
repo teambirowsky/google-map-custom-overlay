@@ -46,9 +46,15 @@
 			properties: {
 				position: {
 					type: String,
-                    reflectToAttribute: true
+					reflectToAttribute: true
 				}
-			}
+			},
+
+			listeners: {
+				'tap': '_onTap'
+			},
+
+			_onTap: function (event) { }
 
 		});
 

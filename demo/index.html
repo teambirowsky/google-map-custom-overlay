@@ -62,7 +62,7 @@
                         api-key="AIzaSyDtwbkcg7mLu-h4J_UydSkF2KtrBtdGuTk">
                 <template is="dom-repeat" items="{{markers}}">
                     <google-map-custom-overlay click-events latitude="{{item.lat}}" longitude="{{item.lng}}"
-                                               position="left" on-google-map-overlay-click="_onCLick">
+                                               position="left" on-google-map-overlay-tap="_onCLick">
                         <div class="marker">
                             <svg class="h3h" viewBox="0 0 70 100">
                                 <defs>

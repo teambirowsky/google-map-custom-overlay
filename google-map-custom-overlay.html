@@ -141,6 +141,7 @@ child of `google-map`.
 				if (this.map && this.overlay.div) {
 					if (this.clickEvents) {
 						this._forwardEvent('click');
+						this._forwardEvent('tap');
 						this._forwardEvent('dblclick');
 						this._forwardEvent('rightclick');
 					} else {
@@ -263,7 +264,7 @@ child of `google-map`.
 			_forwardEvent: function (name) {
 				this._domListeners[name] = google.maps.event.addDomListener(this.overlay.div, name, function (event) {
 					event.stopPropagation();
-					google.maps.event.trigger(this.overlay, 'click', event);
+					google.maps.event.trigger(this.overlay, name, event);
 				}.bind(this));
 				this._listeners[name] = google.maps.event.addListener(this.overlay, name, function (event) {
 					this.fire('google-map-overlay-' + name, event);
